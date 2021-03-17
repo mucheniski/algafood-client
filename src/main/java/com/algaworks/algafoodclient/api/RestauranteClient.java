@@ -1,6 +1,8 @@
 package com.algaworks.algafoodclient.api;
 
+import com.algaworks.algafoodclient.dto.RestaurantePostDTO;
 import com.algaworks.algafoodclient.dto.RestauranteResumoDTO;
+import com.algaworks.algafoodclient.dto.RestauranteRetornoDTO;
 import com.algaworks.algafoodclient.exception.ClientApiException;
 import lombok.AllArgsConstructor;
 import org.springframework.web.client.RestClientResponseException;
@@ -36,5 +38,17 @@ public class RestauranteClient {
         }
 
     }
+
+    public RestauranteRetornoDTO salvar(RestaurantePostDTO restaurantePostDTO) {
+        try {
+            URI resourceURI = URI.create(url + RESOURCE_PATH);
+            var restauranteRetornoDTO = restTemplate.postForObject(resourceURI, restaurantePostDTO, RestauranteRetornoDTO.class);
+            return restauranteRetornoDTO;
+        } catch (RestClientResponseException e) {
+            throw new ClientApiException(e.getMessage(), e);
+        }
+    }
+
+
 
 }
