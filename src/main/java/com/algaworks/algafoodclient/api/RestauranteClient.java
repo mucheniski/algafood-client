@@ -1,7 +1,9 @@
 package com.algaworks.algafoodclient.api;
 
 import com.algaworks.algafoodclient.dto.RestauranteResumoDTO;
+import com.algaworks.algafoodclient.exception.ClientApiException;
 import lombok.AllArgsConstructor;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -15,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RestauranteClient {
 
-    private static final String RESOURCE_PATH = "/restaurante";
+    private static final String RESOURCE_PATH = "/restaurantes";
 
     /* Classe do próprio Spring que auxilia nas requisições HTTP */
     RestTemplate restTemplate;
@@ -24,11 +26,14 @@ public class RestauranteClient {
 
     public List<RestauranteResumoDTO> listar() {
 
-        URI resourceURI = URI.create(url + RESOURCE_PATH);
+        try{
+            URI resourceURI = URI.create(url + RESOURCE_PATH);
+            RestauranteResumoDTO[] restaurantes = restTemplate.getForObject(resourceURI, RestauranteResumoDTO[].class);
+            return Arrays.asList(restaurantes);
 
-        RestauranteResumoDTO[] restaurantes = restTemplate.getForObject(resourceURI, RestauranteResumoDTO[].class);
-
-        return Arrays.asList(restaurantes);
+        } catch (RestClientResponseException e) {
+            throw new ClientApiException(e.getMessage(), e);
+        }
 
     }
 

@@ -1,7 +1,10 @@
 package com.algaworks.algafoodclient;
 
 import com.algaworks.algafoodclient.api.RestauranteClient;
+import com.algaworks.algafoodclient.exception.ClientApiException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 public class ListagemRestaurantesMain {
 
@@ -9,9 +12,24 @@ public class ListagemRestaurantesMain {
 
     public static void main(String[] args) {
 
-        RestTemplate restTemplate = new RestTemplate();
-        RestauranteClient restauranteClient = new RestauranteClient(restTemplate, URL);
-        restauranteClient.listar().stream().forEach(restaurante -> System.out.print(restaurante));
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            RestauranteClient restauranteClient = new RestauranteClient(restTemplate, URL);
+            restauranteClient.listar().stream().forEach(restaurante -> System.out.print(restaurante));
+        } catch (ClientApiException e) {
+            if (e.getProblem() != null) {
+                System.out.println();
+                System.out.println("PROBLEMA COMPLETO");
+                System.out.println(e.getProblem());
+                System.out.println("========================================");
+                System.out.println("MENSAGEM PARA O USUÁRIO");
+                System.out.println(e.getProblem().getMensagemParaUsuario());
+                System.out.println();
+            } else {
+                System.out.println("Erro desconhecido");
+                e.printStackTrace();
+            }
+        }
 
     }
 
